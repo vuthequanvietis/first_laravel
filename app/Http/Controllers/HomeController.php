@@ -2,8 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Contact;
 use Illuminate\Http\Request;
-
+use Auth;
 class HomeController extends Controller
 {
     /**
@@ -23,7 +24,8 @@ class HomeController extends Controller
      */
     public function index()
     {
-        return view('home');
+        $contacts = Contact::where('user_id',Auth::id())->get();
+        return view('home',compact('contacts'));
     }
     public function welcome()
     {

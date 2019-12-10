@@ -5,4 +5,6 @@
         'email' => 'Nhập Email',
         'content' => 'Nhập Nội dung',
         'send' => 'Gửi đi',
+        'cancel' => 'Hủy'
+
     ];

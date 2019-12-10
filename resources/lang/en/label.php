@@ -5,4 +5,5 @@
         'email' => 'Email',
         'content' => 'Content',
         'send' => 'Send',
+        'cancel' => 'Cancel'
     ];

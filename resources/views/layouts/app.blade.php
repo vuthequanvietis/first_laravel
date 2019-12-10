@@ -8,7 +8,7 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
     <title>{{ config('app.name', 'Laravel') }}</title>
-
+    <script src="https://kit.fontawesome.com/a076d05399.js"></script>
     <!-- Scripts -->
     <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
@@ -25,7 +25,7 @@
     <div id="app">
         <nav class="navbar navbar-expand-md navbar-light bg-white shadow-sm">
             <div class="container">
-                <a class="navbar-brand" href="{{ url('/') }}">
+                <a class="navbar-brand" href="{{ route('home') }}">
                     {{ config('app.name', 'Laravel') }}
                 </a>
                 <a class="btn btn-link" href="{{ route('language.change', ['en']) }}">English</a>
@@ -45,11 +45,11 @@
                         <!-- Authentication Links -->
                         @guest
                             <li class="nav-item">
-                                <a class="nav-link" href="{{ route('login') }}">{{ __('Login') }}</a>
+                                <a class="nav-link" href="{{ route('login') }}">{{ __('index.login') }}</a>
                             </li>
                             @if (Route::has('register'))
                                 <li class="nav-item">
-                                    <a class="nav-link" href="{{ route('register') }}">{{ __('Register') }}</a>
+                                    <a class="nav-link" href="{{ route('register') }}">{{ __('index.register') }}</a>
                                 </li>
                             @endif
                         @else
@@ -59,15 +59,21 @@
                                 </a>
 
                                 <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
-                                    <a class="dropdown-item" href="{{ route('logout') }}"
-                                       onclick="event.preventDefault();
-                                                     document.getElementById('logout-form').submit();">
-                                        {{ __('Logout') }}
-                                    </a>
-
                                     <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
                                         @csrf
                                     </form>
+                                    <a class="dropdown-item" href="{{ route('logout') }}"
+                                       onclick="event.preventDefault();
+                                                     document.getElementById('logout-form').submit();">
+                                        {{ __('index.logout') }}
+                                    </a>
+                                    <a class="dropdown-item" href="{{ route('trash') }}">
+                                        @if (App\Models\Contact::onlyTrashed()->get()->count() <=0)
+                                            <p class="text-danger" title="Trash is empty"><i class="fa fa-trash-alt"></i>Trash</p>
+                                        @else
+                                            <p class="text-primary"><i class="fa fa-trash-alt"></i>Trash</p>
+                                        @endif
+                                    </a>
                                 </div>
                             </li>
                         @endguest
@@ -80,5 +86,18 @@
             @yield('content')
         </main>
     </div>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.0/jquery.min.js"></script>
+    <script >
+        setTimeout(() => {
+            $('.will-hid').fadeOut();
+        }, 2000);
+        $('#remove_form').submit(()=>{
+            let conf = confirm('Do you want delete this');
+            if (conf) {
+                return true
+            }
+            return false
+        })
+    </script>
 </body>
 </html>
