@@ -68,7 +68,7 @@
                                         {{ __('index.logout') }}
                                     </a>
                                     <a class="dropdown-item" href="{{ route('trash') }}">
-                                        @if (App\Models\Contact::onlyTrashed()->get()->count() <=0)
+                                        @if (App\Models\Contact::your()->onlyTrashed()->count() <=0)
                                             <p class="text-danger" title="Trash is empty"><i class="fa fa-trash-alt"></i>Trash</p>
                                         @else
                                             <p class="text-primary"><i class="fa fa-trash-alt"></i>Trash</p>

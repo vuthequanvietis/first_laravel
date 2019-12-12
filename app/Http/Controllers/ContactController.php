@@ -4,14 +4,17 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\Contact\ContactStoreRequest;
 use App\Http\Requests\Contact\ContactUpdateRequest;
+use App\Mail\MyFirstMail;
 use App\Models\Contact;
 use Auth;
+use Illuminate\Support\Facades\Mail;
 
 class ContactController extends Controller
 {
-    public function __construct()
+    public function index()
     {
-        $this->middleware('auth');
+        $contacts = Contact::your()->get();
+        return view('home',compact('contacts'));
     }
     public function create()
     {
@@ -23,19 +26,21 @@ class ContactController extends Controller
         $contact->fill($request->all());
         $contact->user_id = Auth::id();
         $contact->save();
+        $contact = $contact->load('user');
+        Mail::to($request->email)->send(new MyFirstMail($contact));
         return redirect()
         ->route('contacts.show',[$contact->id])
         ->with(['success' => 'send contact successfull']);
     }
     public function edit($id)
     {
-        $contact = Contact::where('id',$id)->where('user_id',Auth::id())->first();
+        $contact = Contact::your()->where('id',$id)->first();
 
         return view('contacts.edit',compact('contact'));
     }
     public function update(ContactUpdateRequest $request,$id)
     {
-        $contact = Contact::where('id',$id)->where('user_id',Auth::id())->first();
+        $contact = Contact::your()->where('id',$id)->first();
         $contact->fill($request->all())->save();
         return redirect()
         ->route('contacts.show',[$contact->id])
@@ -43,7 +48,7 @@ class ContactController extends Controller
     }
     public function show($id)
     {
-        $contact = Contact::find($id);
+        $contact = Contact::your()->where('id',$id)->first();
         if (!$contact) {
             abort(404);
         }
@@ -51,20 +56,20 @@ class ContactController extends Controller
     }
     public function destroy($id)
     {
-        Contact::destroy($id);
+        Contact::your()->where('id',$id)->delete();
         return redirect()
         ->back()
         ->with(['success' => 'Contact has been moved to the Recycle Bin']);
     }
     public function hardDestroy($id)
     {
-        Contact::withTrashed()->forceDelete($id);
+        Contact::your()->withTrashed()->where('id',$id)->forceDelete();
         return redirect()->back()
         ->with(['success' => 'remove contact successfully']);
     }
     public function restore($id)
     {
-        Contact::withTrashed()->find($id)->restore();
+        Contact::your()->withTrashed()->where('id',$id)->first()->restore();
         return redirect()->back()
         ->with(['success' => 'restore contact successfully']);
     }
